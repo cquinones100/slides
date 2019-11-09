@@ -114,5 +114,31 @@ RSpec.describe Slides::Presentation do
 
       described_class.run(:a_presentation)
     end
+
+    context 'when there are presentation methods in the block' do
+      it 'calls the methods' do
+        class AThing
+          def self.call; end
+
+          def self.other_call; end
+        end
+
+        class Slides::Presentation
+          def __internal_method
+            AThing.call
+          end
+        end
+
+        described_class.define :a_presentation do
+          slide do
+            __internal_method
+          end
+        end
+
+        expect(AThing).to receive(:call)
+
+        described_class.run(:a_presentation)
+      end
+    end
   end
 end
