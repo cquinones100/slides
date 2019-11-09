@@ -1,0 +1,96 @@
+AllCops:
+  DisplayCopNames: true
+  TargetRubyVersion: 2.3
+  Include:
+    - '**/Rakefile'
+    - '**/*.gemspec'
+  Exclude:
+    - 'bin/**'
+
+Metrics/LineLength:
+  Max: 80
+
+Metrics/MethodLength:
+  Max: 15
+
+Metrics/BlockLength:
+  Enabled: false
+
+Metrics/ClassLength:
+  Enabled: false
+
+Metrics/AbcSize:
+  Max: 22
+
+Naming/VariableNumber:
+  Enabled: false
+
+Naming/FileName:
+  Exclude:
+    - 'Gemfile'
+    - 'Guardfile'
+
+Layout/MultilineMethodCallIndentation:
+  EnforcedStyle: indented
+
+Layout/IndentArray:
+  EnforcedStyle: consistent
+
+Layout/IndentHash:
+  EnforcedStyle: consistent
+
+Lint/BooleanSymbol:
+  Enabled: false
+
+Style/CaseEquality:
+  Enabled: false
+
+Style/ClassAndModuleChildren:
+  Enabled: false
+
+Style/Documentation:
+  Enabled: false
+
+Style/NumericLiterals:
+  Enabled: false
+
+Style/RaiseArgs:
+  EnforcedStyle: compact
+
+Style/DoubleNegation:
+  Enabled: false
+
+Style/FrozenStringLiteralComment:
+  Enabled: false
+
+Style/RescueModifier:
+  Enabled: false
+
+Style/PercentLiteralDelimiters:
+  PreferredDelimiters:
+    default: '()'
+    '%i': '()'
+    '%I': '()'
+    '%w': '()'
+    '%W': '()'
+
+Style/LambdaCall:
+  Enabled: false
+
+Style/EmptyMethod:
+  Enabled: false
+
+Style/NumericPredicate:
+  Enabled: false
+
+Style/SafeNavigation:
+  Enabled: false
+
+Style/DateTime:
+  Enabled: false
+
+Style/WordArray:
+  Enabled: false
+
+Style/SymbolArray:
+  Enabled: false
