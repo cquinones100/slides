@@ -13,4 +13,12 @@ RSpec.configure do |config|
   config.expect_with :rspec do |c|
     c.syntax = :expect
   end
+
+  config.filter_run :focus
+  config.run_all_when_everything_filtered = true
+
+  config.before(:each) do
+    Slides::Presentation.reset!
+    allow(STDIN).to receive(:puts)
+  end
 end
