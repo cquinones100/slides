@@ -19,7 +19,7 @@ RSpec.configure do |config|
 
   config.before(:each) do
     Slides::Presentation.reset!
-    allow(STDIN).to receive(:puts)
+    allow(STDOUT).to receive(:puts)
     allow_any_instance_of(Slides::Slide)
       .to receive(:system)
       .with('clear')

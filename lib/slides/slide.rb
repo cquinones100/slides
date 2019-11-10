@@ -1,9 +1,12 @@
 module Slides
   class Slide
+    attr_writer :index
+
     def initialize(&block)
       @block = block
       @texts = []
       @base = block.binding.receiver
+      @index = nil
     end
 
     def print
@@ -11,12 +14,14 @@ module Slides
 
       clear
 
+      STDOUT.puts("Slide #{index} of #{base.slides.size}")
+
       STDOUT.puts(with_vertical_padding { texts.join("\n\n") })
     end
 
     private
 
-    attr_reader :block, :texts, :base
+    attr_reader :block, :texts, :base, :index
 
     def clear
       system 'clear'

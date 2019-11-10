@@ -117,6 +117,33 @@ RSpec.describe Slides::Presentation do
         described_class.run(:a_presentation)
       end
 
+      it 'prints the current slide number' do
+        allow(IO)
+          .to receive(:console)
+          .and_return(OpenStruct.new(winsize: [3, 3]))
+
+        described_class.define :a_presentation do
+          slide do
+            message do
+              'hi'
+            end
+          end
+
+          slide do
+            message do
+              'hi again'
+            end
+          end
+        end
+
+        expect(STDOUT).to receive(:puts).with('Slide 1 of 2').ordered
+        expect(STDOUT).to receive(:puts).with("\n'hi'\n").ordered
+        expect(STDOUT).to receive(:puts).with('Slide 2 of 2').ordered
+        expect(STDOUT).to receive(:puts).with("\n'hi again'\n").ordered
+
+        described_class.run(:a_presentation)
+      end
+
       context 'when a slide contains multiple kinds of text' do
         it 'uses all called text' do
           allow(IO)
@@ -145,6 +172,8 @@ RSpec.describe Slides::Presentation do
 
           formatted_code = CodeRay.scan(text.chomp, :ruby).term
 
+          expect(STDOUT).to receive(:puts).with('Slide 1 of 1')
+
           expect(STDOUT)
             .to receive(:puts)
             .with("\na message\n\n" + formatted_code + "\n")
@@ -169,6 +198,7 @@ RSpec.describe Slides::Presentation do
         end
       end
 
+      expect(STDOUT).to receive(:puts).with('Slide 1 of 1')
       expect(STDOUT).to receive(:puts).with("\na message\n")
 
       described_class.run(:a_presentation)
@@ -205,6 +235,7 @@ RSpec.describe Slides::Presentation do
         end
       RUBY
 
+      expect(STDOUT).to receive(:puts).with('Slide 1 of 1')
       expect(STDOUT)
         .to receive(:puts)
         .with("\n" + CodeRay.scan(text.chomp, :ruby).term + "\n")

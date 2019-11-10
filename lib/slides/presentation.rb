@@ -90,21 +90,28 @@ module Slides
       end
     end
 
-    attr_reader :name, :window_height, :window_width
+    attr_reader :name, :window_height, :window_width, :slides
 
     def initialize(name:, &block)
       @name = name
       @definition = block
       @base = block.binding.receiver
       @window_height, @window_width = IO.console.winsize
+      @slides = []
     end
 
     def run
       instance_eval(&definition)
+
+      slides.each_with_index do |slide, index|
+        slide.index = index + 1
+
+        slide.print
+      end
     end
 
     def slide(&block)
-      Slide.new(&block).print
+      slides << Slide.new(&block)
     end
 
     private
