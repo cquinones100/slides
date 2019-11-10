@@ -62,7 +62,7 @@ module Slides
     end
 
     def message(&block)
-      texts << block_source(block)
+      texts << Formatters::Message.new(&block)
     end
 
     def code(&block)
