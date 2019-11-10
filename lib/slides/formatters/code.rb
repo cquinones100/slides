@@ -10,12 +10,16 @@ module Slides
         self << highlighted.chomp
       end
 
+      def raw
+        @raw ||= block_source(block)
+      end
+
       private
 
       attr_reader :langauge, :block
 
       def highlighted
-        CodeRay.scan(block_source(block), :ruby).term
+        CodeRay.scan(raw, :ruby).term
       end
 
       def block_source(block)

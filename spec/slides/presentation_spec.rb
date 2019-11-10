@@ -137,9 +137,9 @@ RSpec.describe Slides::Presentation do
         end
 
         expect(STDOUT).to receive(:puts).with('Slide 1 of 2').ordered
-        expect(STDOUT).to receive(:puts).with("\n'hi'\n").ordered
+        expect(STDOUT).to receive(:puts).with("'hi'\n\n").ordered
         expect(STDOUT).to receive(:puts).with('Slide 2 of 2').ordered
-        expect(STDOUT).to receive(:puts).with("\n'hi again'\n").ordered
+        expect(STDOUT).to receive(:puts).with("'hi again'\n\n").ordered
 
         described_class.run(:a_presentation)
       end
@@ -176,7 +176,7 @@ RSpec.describe Slides::Presentation do
 
           expect(STDOUT)
             .to receive(:puts)
-            .with("\na message\n\n" + formatted_code + "\n")
+            .with("a message\n\n\n" + formatted_code + "\n\n")
 
           described_class.run(:a_presentation)
         end
@@ -186,9 +186,7 @@ RSpec.describe Slides::Presentation do
 
   describe '#message' do
     it 'prints the message with padding' do
-      allow(IO)
-        .to receive(:console)
-        .and_return(OpenStruct.new(winsize: [3, 3]))
+      allow(IO).to receive(:console).and_return(OpenStruct.new(winsize: [3, 3]))
 
       described_class.define :a_presentation do
         slide do
@@ -199,7 +197,7 @@ RSpec.describe Slides::Presentation do
       end
 
       expect(STDOUT).to receive(:puts).with('Slide 1 of 1')
-      expect(STDOUT).to receive(:puts).with("\na message\n")
+      expect(STDOUT).to receive(:puts).with("a message\n\n")
 
       described_class.run(:a_presentation)
     end
@@ -207,9 +205,7 @@ RSpec.describe Slides::Presentation do
 
   describe '#code' do
     it 'prints the message with padding and syntax highlighting' do
-      allow(IO)
-        .to receive(:console)
-        .and_return(OpenStruct.new(winsize: [3, 3]))
+      allow(IO).to receive(:console).and_return(OpenStruct.new(winsize: [3, 3]))
 
       described_class.define :a_presentation do
         slide do
@@ -238,7 +234,7 @@ RSpec.describe Slides::Presentation do
       expect(STDOUT).to receive(:puts).with('Slide 1 of 1')
       expect(STDOUT)
         .to receive(:puts)
-        .with("\n" + CodeRay.scan(text.chomp, :ruby).term + "\n")
+        .with(CodeRay.scan(text.chomp, :ruby).term + "\n\n")
 
       described_class.run(:a_presentation)
     end
