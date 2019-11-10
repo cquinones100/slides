@@ -1,3 +1,6 @@
+require 'set'
+require 'io/console'
+
 module Slides
   class Presentation
     ERROR_MESSAGE = 'There were errors with defined presentations'.freeze
@@ -83,24 +86,25 @@ module Slides
       end
 
       def print(message)
-        STDIN.puts(message)
+        STDOUT.puts(message)
       end
     end
 
-    attr_reader :name
+    attr_reader :name, :window_height, :window_width
 
     def initialize(name:, &block)
       @name = name
       @definition = block
       @base = block.binding.receiver
+      @window_height, @window_width = IO.console.winsize
     end
 
     def run
       instance_eval(&definition)
     end
 
-    def slide
-      yield
+    def slide(&block)
+      Slide.new(&block).print
     end
 
     private

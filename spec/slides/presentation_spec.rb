@@ -1,3 +1,6 @@
+require 'coderay'
+require 'io/console'
+
 RSpec.describe Slides::Presentation do
   describe 'class methods' do
     describe '.run' do
@@ -6,9 +9,9 @@ RSpec.describe Slides::Presentation do
           it 'prints errors' do
             described_class.errors[:duplicate_names] = ['error']
 
-            expect(STDIN).to receive(:puts).with(described_class::ERROR_MESSAGE)
+            expect(STDOUT).to receive(:puts).with(described_class::ERROR_MESSAGE)
 
-            expect(STDIN).to receive(:puts).with('Duplicate Names: error')
+            expect(STDOUT).to receive(:puts).with('Duplicate Names: error')
 
             described_class.run('a_presentation')
           end
@@ -16,7 +19,7 @@ RSpec.describe Slides::Presentation do
 
         context 'when no name is passed in' do
           it 'prints an error' do
-            expect(STDIN)
+            expect(STDOUT)
               .to receive(:puts)
               .with(described_class::NO_NAME_ERROR_MESSAGE)
 
@@ -26,11 +29,11 @@ RSpec.describe Slides::Presentation do
 
         context 'when the name passed in is not a saved presentation' do
           it 'prints an error' do
-            expect(STDIN)
+            expect(STDOUT)
               .to receive(:puts)
               .with(described_class::PRESENTATION_NOT_FOUND_ERROR_MESSAGE)
 
-            expect(STDIN)
+            expect(STDOUT)
               .to receive(:puts)
               .with('Presentation Name: a presentation that does not exist')
 
@@ -97,48 +100,116 @@ RSpec.describe Slides::Presentation do
   end
 
   describe '#run' do
-    it 'calls all slides' do
-      class AThing
-        def self.call; end
-
-        def self.other_call; end
-      end
-
-      described_class.define :a_presentation do
-        slide { AThing.call }
-        slide { AThing.other_call }
-      end
-
-      expect(AThing).to receive(:call).ordered
-      expect(AThing).to receive(:other_call).ordered
-
-      described_class.run(:a_presentation)
-    end
-
-    context 'when there are presentation methods in the block' do
-      it 'calls the methods' do
-        class AThing
-          def self.call; end
-
-          def self.other_call; end
-        end
-
-        class Slides::Presentation
-          def __internal_method
-            AThing.call
-          end
-        end
-
+    describe '#slide' do
+      it 'clears the screen' do
         described_class.define :a_presentation do
           slide do
-            __internal_method
+            message do
+              'hi'
+            end
           end
         end
 
-        expect(AThing).to receive(:call)
+        expect_any_instance_of(Slides::Slide)
+          .to receive(:system)
+          .with('clear')
 
         described_class.run(:a_presentation)
       end
+
+      context 'when a slide contains multiple kinds of text' do
+        it 'uses all called text' do
+          allow(IO)
+            .to receive(:console)
+            .and_return(OpenStruct.new(winsize: [3, 3]))
+
+          described_class.define :a_presentation do
+            slide do
+              message do
+                a message
+              end
+
+              code do
+                def hi
+                  puts 'hi'
+                end
+              end
+            end
+          end
+
+          text = <<~RUBY
+            def hi
+              puts 'hi'
+            end
+          RUBY
+
+          formatted_code = CodeRay.scan(text.chomp, :ruby).term
+
+          expect(STDOUT)
+            .to receive(:puts)
+            .with("\na message\n\n" + formatted_code + "\n")
+
+          described_class.run(:a_presentation)
+        end
+      end
+    end
+  end
+
+  describe '#message' do
+    it 'prints the message with padding' do
+      allow(IO)
+        .to receive(:console)
+        .and_return(OpenStruct.new(winsize: [3, 3]))
+
+      described_class.define :a_presentation do
+        slide do
+          message do
+            a message
+          end
+        end
+      end
+
+      expect(STDOUT).to receive(:puts).with("\na message\n")
+
+      described_class.run(:a_presentation)
+    end
+  end
+
+  describe '#code' do
+    it 'prints the message with padding and syntax highlighting' do
+      allow(IO)
+        .to receive(:console)
+        .and_return(OpenStruct.new(winsize: [3, 3]))
+
+      described_class.define :a_presentation do
+        slide do
+          code do
+            class Thing
+              def thing
+                proc do
+                  do_something
+                end
+              end
+            end
+          end
+        end
+      end
+
+      text = <<~RUBY
+        class Thing
+          def thing
+            proc do
+              do_something
+            end
+          end
+        end
+      RUBY
+
+      expect(STDOUT)
+        .to receive(:puts)
+        .with("\n" + CodeRay.scan(text.chomp, :ruby).term + "\n")
+
+      described_class.run(:a_presentation)
     end
   end
 end
