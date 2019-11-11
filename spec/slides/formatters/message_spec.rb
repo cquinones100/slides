@@ -4,11 +4,11 @@ RSpec.describe Slides::Formatters::Message do
       context 'when all text is bolded' do
         it 'prints the text bolded' do
           block = proc do
-            'bold'
+            "'bold'
             hi this is something bolded
 
             things
-            'bold'
+            'bold'"
           end
 
           formatted_text = described_class.new(&block)
@@ -25,11 +25,11 @@ RSpec.describe Slides::Formatters::Message do
       context 'when some text is bolded' do
         it 'prints the text bolded' do
           block = proc do
-            hi this is text
+            "hi this is text
 
             'bold'
             hi this is something bolded
-            'bold'
+            'bold'"
           end
 
           formatted_text = described_class.new(&block)
@@ -47,9 +47,9 @@ RSpec.describe Slides::Formatters::Message do
       context 'when all the text is underlined' do
         it 'prints the text underlined' do
           block = proc do
-            'underline'
+            "'underline'
             hi this is something underlined
-            'underline'
+            'underline'"
           end
 
           formatted_text = described_class.new(&block)
@@ -64,11 +64,11 @@ RSpec.describe Slides::Formatters::Message do
       context 'when some text is underlined' do
         it 'prints the text underlined' do
           block = proc do
-            'underline'
+            "'underline'
             hi this is something underlined
             'underline'
 
-            hi this is text
+            hi this is text"
           end
 
           formatted_text = described_class.new(&block)
@@ -85,11 +85,11 @@ RSpec.describe Slides::Formatters::Message do
       context 'when adding to an existing formatting' do
         it 'adds underlining to the text' do
           block = proc do
-            'underline,bold'
+            "'underline,bold'
                 hi this is something underlined
             'underline,bold'
 
-            hi this is text
+            hi this is text"
           end
 
           formatted_text = described_class.new(&block)

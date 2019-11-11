@@ -94,3 +94,9 @@ Style/WordArray:
 
 Style/SymbolArray:
   Enabled: false
+
+Lint/Void: 
+  Enabled: false
+
+Lint/Debugger:
+  Enabled: false

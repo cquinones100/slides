@@ -8,7 +8,7 @@ module Slides
       private
 
       def formatted
-        apply_formatting(raw)
+        apply_formatting(raw).gsub(/\A"|"\z/, '')
       end
 
       # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
@@ -24,7 +24,8 @@ module Slides
             format_value_strings << ';' unless index == matched_formats.size - 1
           end
 
-          match_text = match.gsub(formats_regex, '').gsub(formats_regex, '')
+          match_text = match.gsub(formats_regex, '').strip
+
           matched_words = match_text.split(' ')
 
           matched_words.each_with_index do |word, index|
