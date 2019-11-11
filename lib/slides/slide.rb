@@ -82,8 +82,9 @@ module Slides
 
       halved_width.times { left_padding << ' ' }
 
-      @with_horizontal_padding = lines.map { |string| left_padding + string }
-        .join("\n")
+      @with_horizontal_padding = lines.map do |string|
+        left_padding + string.chomp
+      end.join("\n")
     end
 
     def with_vertical_padding(string)

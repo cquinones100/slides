@@ -137,9 +137,9 @@ RSpec.describe Slides::Presentation do
         end
 
         expect(STDOUT).to receive(:puts).with('Slide 1 of 2').ordered
-        expect(STDOUT).to receive(:puts).with("'hi'\n\n").ordered
+        expect(STDOUT).to receive(:puts).with("'hi'\n").ordered
         expect(STDOUT).to receive(:puts).with('Slide 2 of 2').ordered
-        expect(STDOUT).to receive(:puts).with("'hi again'\n\n").ordered
+        expect(STDOUT).to receive(:puts).with("'hi again'\n").ordered
 
         described_class.run(:a_presentation)
       end
@@ -176,7 +176,7 @@ RSpec.describe Slides::Presentation do
 
           expect(STDOUT)
             .to receive(:puts)
-            .with("a message\n\n\n" + formatted_code + "\n\n")
+            .with("a message\n\n" + formatted_code + "\n")
 
           described_class.run(:a_presentation)
         end
@@ -197,7 +197,7 @@ RSpec.describe Slides::Presentation do
       end
 
       expect(STDOUT).to receive(:puts).with('Slide 1 of 1')
-      expect(STDOUT).to receive(:puts).with("a message\n\n")
+      expect(STDOUT).to receive(:puts).with("a message\n")
 
       described_class.run(:a_presentation)
     end
@@ -234,7 +234,7 @@ RSpec.describe Slides::Presentation do
       expect(STDOUT).to receive(:puts).with('Slide 1 of 1')
       expect(STDOUT)
         .to receive(:puts)
-        .with(CodeRay.scan(text.chomp, :ruby).term + "\n\n")
+        .with(CodeRay.scan(text.chomp, :ruby).term + "\n")
 
       described_class.run(:a_presentation)
     end
