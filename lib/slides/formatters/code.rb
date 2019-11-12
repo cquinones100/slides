@@ -5,13 +5,11 @@ module Slides
     class Code < Formatter
       private
 
-      attr_reader :langauge, :block
+      attr_reader :block
 
-      def highlighted
+      def formatted
         CodeRay.scan(raw, :ruby).term.chomp
       end
-
-      alias formatted highlighted
     end
   end
 end
