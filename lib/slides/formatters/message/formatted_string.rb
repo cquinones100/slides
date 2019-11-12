@@ -1,108 +1,6 @@
 module Slides
   module Formatters
     class FormattedString < String
-      class Word < String
-        def tag?
-          formats.include? gsub(tag_regex, '')
-        end
-
-        def newline?
-          self == "\n"
-        end
-
-        def to_code
-          FormattedString::FORMATS[gsub(tag_regex, '')]
-        end
-
-        def stripped
-          gsub(tag_regex, '')
-        end
-
-        private
-
-        def formats
-          @formats = FormattedString::FORMATS.keys
-        end
-
-        def tag_regex
-          FormattedString::TAG_REGEX
-        end
-      end
-
-      class Tags
-        attr_reader :opened, :closed
-
-        def initialize
-          @opened = []
-          @closed = []
-        end
-
-        def reset!
-          @opened = []
-          @closed = []
-        end
-
-        def close_code
-          FormattedString::CLOSE_CODE
-        end
-
-        def closed?
-          !closed.empty? && opened.empty?
-        end
-
-        def add(word)
-          if opened.last == word.stripped
-            closed << opened.pop
-          else
-            opened << word.stripped
-          end
-        end
-
-        def code
-          opened.each_with_object('').with_index do |(tag, code_string), index|
-            code_string << FormattedString::OPEN_CODE if index.zero?
-            code_string << tag.to_code
-            code_string << ';' if index != opened.size - 1
-            code_string << 'm' if index == opened.size - 1
-          end
-        end
-      end
-
-      class Characters < Array
-        def initialize(string)
-          characters = string.split('')
-
-          characters.each_with_index do |character, index|
-            self << Character.new(character, characters, index)
-          end
-        end
-      end
-
-      class Character < String
-        def initialize(character, characters, index)
-          @characters = characters
-          @index = index
-
-          self << character
-        end
-
-        def whitespace?
-          !(self =~ /\s/).nil?
-        end
-
-        def last?
-          index == characters.size - 1
-        end
-
-        def newline?
-          self == "\n"
-        end
-
-        private
-
-        attr_reader :characters, :index
-      end
-
       TAG_REGEX = /(\A\s*')|('(\s*))/
       OPEN_CODE = "\e[".freeze
       CLOSE_CODE = "\e[0m".freeze
@@ -117,8 +15,13 @@ module Slides
 
       def initialize(raw)
         @raw = raw
-        @characters = Characters.new(raw)
-        @tags = Tags.new
+        split_raw = raw.split('')
+
+        @characters = split_raw.map.with_index do |character, index|
+          Character.new(character, split_raw, index)
+        end
+
+        @tags = TagCollection.new
         @word = Word.new
 
         apply_formatting
@@ -149,19 +52,7 @@ module Slides
         if word.tag?
           tags.add word
 
-          if tags.closed?
-            padding = ''
-
-            gsub!(/\s\z/) do |match|
-              padding = match
-
-              ''
-            end
-
-            self << tags.close_code
-            self << padding
-            tags.reset!
-          end
+          close_tag if tags.closed?
 
           return
         end
@@ -169,6 +60,20 @@ module Slides
         return if word.empty?
 
         self << tags.code + word
+      end
+
+      def close_tag
+        padding = ''
+
+        gsub!(/\s\z/) do |match|
+          padding = match
+
+          ''
+        end
+
+        self << tags.close_code
+        self << padding
+        tags.reset!
       end
     end
   end
