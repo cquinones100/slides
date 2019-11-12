@@ -1,7 +1,8 @@
 module Slides
   module Formatters
     class Formatter < String
-      def initialize(&block)
+      def initialize(base, &block)
+        @base = base
         @block = block
 
         self << formatted
@@ -17,7 +18,7 @@ module Slides
 
       private
 
-      attr_reader :block
+      attr_reader :base, :block
 
       def block_source(block)
         require 'pry'

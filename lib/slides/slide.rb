@@ -8,6 +8,7 @@ module Slides
       @base = block.binding.receiver
       @index = nil
       @headers = []
+      @actions = []
     end
 
     def print
@@ -21,6 +22,8 @@ module Slides
 
       STDOUT.puts with_vertical_padding(with_horizontal_padding)
 
+      actions.each(&:call)
+
       STDIN.gets
 
       clear
@@ -28,7 +31,7 @@ module Slides
 
     private
 
-    attr_reader :block, :texts, :base, :index, :headers
+    attr_reader :block, :texts, :base, :index, :headers, :actions
 
     def raw_lines
       @raw_lines ||= texts.each_with_object([]) do |text, array|
@@ -62,15 +65,27 @@ module Slides
     end
 
     def message(&block)
-      texts << Formatters::Message.new(&block)
+      add_text Formatters::Message.new(base, &block)
     end
 
     def code(&block)
-      add_text Formatters::Code.new(&block)
+      add_text Formatters::Code.new(base, &block)
+    end
+
+    def wait_for_input
+      add_action do
+        STDIN.gets
+
+        yield
+      end
     end
 
     def add_text(text)
       texts << text
+    end
+
+    def add_action(&block)
+      actions << block
     end
 
     def with_horizontal_padding

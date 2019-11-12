@@ -8,7 +8,7 @@ module Slides
     PRESENTATION_NOT_FOUND_ERROR_MESSAGE = 'Error: Presentation not found'.freeze
 
     class << self
-      def run(name = nil)
+      def run(name = nil, slide_number = 0)
         return print(NO_NAME_ERROR_MESSAGE) if name.nil?
         return error unless errors.empty?
 
@@ -18,7 +18,7 @@ module Slides
 
         return presentation_not_found_error(name) if found_presentation.nil?
 
-        found_presentation.run
+        found_presentation.run(slide_number.to_i)
       end
 
       def errors
@@ -100,11 +100,13 @@ module Slides
       @slides = []
     end
 
-    def run
+    def run(slide_number = 0)
       instance_eval(&definition)
 
-      slides.each_with_index do |slide, index|
-        slide.index = index + 1
+      slide_number = 0 if slide_number < 0
+
+      slides.drop(slide_number).each_with_index do |slide, index|
+        slide.index = slide_number + index + 1
 
         slide.print
       end

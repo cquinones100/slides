@@ -3,12 +3,6 @@ require 'coderay'
 module Slides
   module Formatters
     class Code < Formatter
-      def initialize(language = :ruby, &block)
-        @language = language
-
-        super(&block)
-      end
-
       private
 
       attr_reader :langauge, :block

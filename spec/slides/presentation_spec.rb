@@ -137,9 +137,9 @@ RSpec.describe Slides::Presentation do
         end
 
         expect(STDOUT).to receive(:puts).with('Slide 1 of 2').ordered
-        expect(STDOUT).to receive(:puts).with("'hi'\n").ordered
+        expect(STDOUT).to receive(:puts).with("hi\n").ordered
         expect(STDOUT).to receive(:puts).with('Slide 2 of 2').ordered
-        expect(STDOUT).to receive(:puts).with("'hi again'\n").ordered
+        expect(STDOUT).to receive(:puts).with("hi again\n").ordered
 
         described_class.run(:a_presentation)
       end
@@ -153,7 +153,7 @@ RSpec.describe Slides::Presentation do
           described_class.define :a_presentation do
             slide do
               message do
-                a message
+                'a message'
               end
 
               code do
@@ -191,7 +191,7 @@ RSpec.describe Slides::Presentation do
       described_class.define :a_presentation do
         slide do
           message do
-            a message
+            'a message'
           end
         end
       end
