@@ -1,4 +1,4 @@
-RSpec.describe Slides::Formatters::Message do 
+RSpec.describe Slides::Formatters::Message do
   describe '#formatted' do
     subject { described_class.new(self, &block) }
 
